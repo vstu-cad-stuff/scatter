@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'PT Sans', serif;
+    font-size: 12pt;
+}
+
+#map {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 0;
+}
+
+#tools, #list {
+    list-style: none;
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .65);
+    text-align: center;
+    overflow: hidden;
+    font-size: 0;
+    position: absolute;
+    width: 26px;
+    left: 10px;
+    z-index: 3;
+    border-radius: 5px;
+}
+
+#tools {
+    top: 70px;
+}
+
+#list {
+    top: 150px;
+}
+
+#tools li, #list li {
+    display: inline-block;
+    width: 26px;
+    padding: 5px 0px;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+#tools li.last, #list li.last {
+    border: 0;
+}
+
+#tools li button, #list li button {
+    border: none;
+    padding: none;
+    height: 16px;
+    width: 16px;
+    background-color: #fff;
+    background-size: contain;
+    opacity: 1;
+}
+
+#list li button.hidden {
+    opacity: .5;
+}
