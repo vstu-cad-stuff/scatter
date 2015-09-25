@@ -35,7 +35,7 @@ body {
 }
 
 #list {
-    top: 150px;
+    top: 102px;
 }
 
 #tools li, #list li {
@@ -58,6 +58,9 @@ body {
     background-color: #fff;
     background-size: contain;
     opacity: 1;
+    font-size: 7pt;
+    vertical-align: middle;
+    text-align: center;
 }
 
 #list li button.hidden {

@@ -1,7 +1,7 @@
 var c_hidden = 0, c_visible = 1;
 var c_lat = 0, c_lon = 1, c_index = 2, c_pop = 3;
 
-var h_list = document.getElementById(list);
+var h_list = document.getElementById('list');
 
 var map = L.map('map').setView([48.7941, 44.8009], 13);
 
@@ -43,16 +43,16 @@ var colors = [
     '#003000', '#dda0dd', '#389218', '#708090', '#013370'
 ];
 
-unlast = function() {
-    var lis = h_list.getElementsByTagName('li').slice(0, -1);
-    for (i in lis) {
-        if (lis[i].className.indexOf('last') > -1)
-            lis[i].className = lis[i].className.replace('last', '');
+relast = function() {
+    var lis = h_list.getElementsByTagName('li');
+    if (lis.length > 0) {
+        for (i in lis)
+            lis[i].className = '';
+        lis[lis.length - 1].className = 'last';
     }
 }
 
-clusters = []; // array of lists of clusters
-// function to get number of creating cluster set
+clusters = [];
 getNumber = function() {
     return clusters.length;
 }
@@ -79,14 +79,22 @@ Cluster = (function() {
         }
         var li = document.createElement('li');
         li.setAttribute('id', 'liCSet' + this.number);
-        li.setAttribute.className = 'last';
+        h_list.appendChild(li);
+        relast();
         var button = document.createElement('button');
         button.setAttribute('id', 'butCSet' + this.number);
         button.style.backgroundColor = this.color;
         button.innerHTML = this.number;
-        button.onClick = this.hide;
-        button.setAttribute('title', 'Cluster set #' + this.number);
-        h_list.appendChild(button);
+        button.setAttribute('onClick', 'clusters[' + this.number + '].hide()');
+        button.setAttribute('onContextmenu', 'clusters[' + this.number + '].delete()');
+        button.setAttribute('title', 'Left-click to hide/show; right-click to delete');
+        if (parseInt('0x' + this.color.slice(1)) <= 0xaaaae5) {
+            button.style.color = '#fff';
+        } else {
+            button.style.color = '#000';
+        }
+        li.appendChild(button);
+        this.li = li;
         this.button = button;
         this.show();
         return this;
@@ -97,10 +105,9 @@ Cluster = (function() {
         } else {
             map.removeLayer(this.layer);
             this.visibility = c_hidden;
-            this.button.onClick = this.show;
-            /*
-                add here: button half opacity
-            */
+            this.button.setAttribute('onClick',
+                'clusters[' + this.number + '].show()');
+            this.button.className += ' hidden';
         }
     }
 
@@ -109,9 +116,9 @@ Cluster = (function() {
         } else {
             map.addLayer(this.layer);
             this.visibility = c_visible;
-            /*
-                add here: button full opacity
-            */
+            this.button.setAttribute('onClick',
+                'clusters[' + this.number + '].hide()');
+            this.button.className = this.button.className.replace(' hidden', '');
         }
     }
 
@@ -120,9 +127,9 @@ Cluster = (function() {
             map.removeLayer(this.layer);
         }
         delete clusters[this.number];
-        /*
-            add here: hide button
-        */
+        this.li.removeChild(this.button);
+        h_list.removeChild(this.li);
+        relast();
     }
 
     return Cluster;
@@ -149,7 +156,7 @@ function read() {
     reader.onload = function(e) {
         var string = e.target.result;
         data = JSON.parse(string);
-
+        clusters.push(new Cluster(data));
     };
 
     blob = file.slice(start, stop + 1);
