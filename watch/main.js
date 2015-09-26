@@ -46,16 +46,16 @@ var colors = [
 relast = function() {
     var lis = h_list.getElementsByTagName('li');
     if (lis.length > 0) {
-        for (i in lis)
+        for (var i in lis)
             lis[i].className = '';
         lis[lis.length - 1].className = 'last';
     }
-}
+};
 
 clusters = [];
 getNumber = function() {
     return clusters.length;
-}
+};
 
 Cluster = (function() {
     function Cluster(array) {
@@ -64,7 +64,7 @@ Cluster = (function() {
         this.list = array;
         this.color = colors[this.number % colors.length];
         this.layer = new L.FeatureGroup();
-        for (i in this.list) {
+        for (var i in this.list) {
             var r = 3 + Math.pow(this.list[i][c_pop], 1 / 3) * 2;
             var m = 'Cluster #' + this.list[i][c_index] + ': ' +
                     this.list[i][c_lat] + ', ' +
@@ -109,7 +109,7 @@ Cluster = (function() {
                 'clusters[' + this.number + '].show()');
             this.button.className += ' hidden';
         }
-    }
+    };
 
     Cluster.prototype.show = function() {
         if (this.visibility == c_visible) {
@@ -120,7 +120,7 @@ Cluster = (function() {
                 'clusters[' + this.number + '].hide()');
             this.button.className = this.button.className.replace(' hidden', '');
         }
-    }
+    };
 
     Cluster.prototype.delete = function() {
         if (this.visibility == c_visible) {
@@ -130,7 +130,7 @@ Cluster = (function() {
         this.li.removeChild(this.button);
         h_list.removeChild(this.li);
         relast();
-    }
+    };
 
     return Cluster;
 })();
@@ -139,28 +139,31 @@ Cluster = (function() {
 function load() {
     var input = document.createElement('input');
     input.setAttribute('type', 'file');
-    input.setAttribute('id', 'input_id');
+    input.setAttribute('multiple', true);
     document.body.appendChild(input);
+    document.body.onfocus = cancel;
     input.click();
     input.addEventListener('change', read, false);
-}
+    function read() {
+        var files = input.files;
+        function onload(evt) {
+            var string = evt.target.result;
+            data = JSON.parse(string);
+            clusters.push(new Cluster(data));
+        }
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var start = 0;
+            var stop = file.size - 1;
+            var reader = new FileReader();
+            reader.onload = onload;
 
-// function for reading file
-function read() {
-    var input = document.getElementById('input_id');
-    var files = input.files;
-    var file = files[0];
-    var start = 0;
-    var stop = file.size - 1;
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        var string = e.target.result;
-        data = JSON.parse(string);
-        clusters.push(new Cluster(data));
-    };
-
-    blob = file.slice(start, stop + 1);
-    reader.readAsBinaryString(blob);
-    document.body.onfocus = '';
-    document.body.removeChild(input);
+            blob = file.slice(start, stop + 1);
+            reader.readAsBinaryString(blob);
+        }
+    }
+    function cancel() {
+        document.body.onfocus = '';
+        document.body.removeChild(input);
+    }
 }
