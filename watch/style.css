@@ -36,6 +36,7 @@ body {
 
 #list {
     top: 102px;
+    max-height: 566px;
 }
 
 #tools li, #list li {
@@ -44,6 +45,10 @@ body {
     padding: 5px 0px;
     margin: 0;
     border-bottom: 1px solid #ccc;
+    color: black;
+    font-size: 7pt;
+    text-align: center;
+    vertical-align: top;
 }
 
 #tools li.last, #list li.last {
@@ -51,8 +56,8 @@ body {
 }
 
 #tools li button, #list li button {
-    border: none;
-    padding: none;
+    border: 0;
+    padding: 0;
     height: 16px;
     width: 16px;
     background-color: #fff;

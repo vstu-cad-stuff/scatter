@@ -43,14 +43,44 @@ var colors = [
     '#003000', '#dda0dd', '#389218', '#708090', '#013370'
 ];
 
-relast = function() {
+relast = function(added) {
     var lis = h_list.getElementsByTagName('li');
+    var dots = document.getElementById('dots');
+    
+    if (len(clusters) > (added ? 20 : 21)) {
+      if (dots == null) {
+        dots = document.createElement('li');
+        dots.setAttribute('id', 'dots');
+        dots.innerHTML = '. . .';
+        h_list.insertBefore(dots, lis[20]);        
+      } else {
+        h_list.removeChild(dots);
+        h_list.insertBefore(dots, lis[20]);
+      }
+    } else {
+      if (dots != null) {
+        h_list.removeChild(dots);
+      }
+    }
+    
     if (lis.length > 0) {
         for (var i in lis)
             lis[i].className = '';
-        lis[lis.length - 1].className = 'last';
+        if (dots == null) {
+          lis[lis.length - 1].className = 'last';
+        } else {
+          dots.className = 'last';
+        }
     }
 };
+
+len = function(a) {
+  l = 0;
+  for (i in a) {
+    if (a[i]) l++;
+  }
+  return l;
+}
 
 clusters = [];
 getNumber = function() {
@@ -59,7 +89,8 @@ getNumber = function() {
 
 Cluster = (function() {
     function Cluster(array) {
-        this.number = getNumber();
+        var number = getNumber()
+        this.number = number;
         this.visibility = c_hidden;
         this.list = array;
         this.color = colors[this.number % colors.length];
@@ -80,13 +111,19 @@ Cluster = (function() {
         var li = document.createElement('li');
         li.setAttribute('id', 'liCSet' + this.number);
         h_list.appendChild(li);
-        relast();
         var button = document.createElement('button');
         button.setAttribute('id', 'butCSet' + this.number);
         button.style.backgroundColor = this.color;
         button.innerHTML = this.number;
-        button.setAttribute('onClick', 'clusters[' + this.number + '].hide()');
-        button.setAttribute('onContextmenu', 'clusters[' + this.number + '].delete()');
+        button.onclick = function(e) {
+            clusters[number].hide();
+            return false;
+        };
+        button.oncontextmenu = function (e) {
+            clusters[number].delete();
+            e.preventDefault();
+            return false;
+        };
         button.setAttribute('title', 'Left-click to hide/show; right-click to delete');
         if (parseInt('0x' + this.color.slice(1)) <= 0xaaaae5) {
             button.style.color = '#fff';
@@ -97,6 +134,7 @@ Cluster = (function() {
         this.li = li;
         this.button = button;
         this.show();
+        relast('added');
         return this;
     }
 
