@@ -138,9 +138,10 @@ function get_type(marker) {
 
 function draw_marker(type, latlng) {
   // creating marker
+  var marker;
   switch (type) {
     case 'default': {
-      var marker = L.marker(latlng, {
+      marker = L.marker(latlng, {
         draggable: 'true',
         // layer's index in 'layers' array
         layer: layers.length - 1,
@@ -150,7 +151,7 @@ function draw_marker(type, latlng) {
           bindPopup(latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
       break; }
     case 'origin': {
-      var marker = L.origin(latlng, {
+      marker = L.origin(latlng, {
         draggable: 'true',
         // layer's index in 'layers' array
         layer: layers.length - 1,
@@ -161,7 +162,7 @@ function draw_marker(type, latlng) {
           latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
       break; }
     case 'destination': {
-      var marker = L.destination(latlng, {
+      marker = L.destination(latlng, {
         draggable: 'true',
         // layer's index in 'layers' array
         layer: layers.length - 1,
@@ -172,7 +173,7 @@ function draw_marker(type, latlng) {
           latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
       break; }
     case 'handle': {
-      var marker = L.handle(latlng, {
+      marker = L.handle(latlng, {
         draggable: 'true',
         // layer's index in 'layers' array
         layer: layers.length - 1
