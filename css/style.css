@@ -90,9 +90,24 @@
 
 /* select type of points */
 
-#select_type {
+#selection_wrapper {
   top: 319px;
+  left: 10px;
+  position: absolute;
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  max-height: 252px;
+  width: 45px;
+  height: 250px;
+}
+
+#select_type {
   visibility: hidden;
+  overflow: visible;
+  position: relative;
+  top: 2px;
+  left: 0px;
+  margin-bottom: 5px;
 }
 
 /* spray area radius */
@@ -114,27 +129,27 @@
 
 #spray_radius input {
   margin: 11px 5px;
-	-webkit-appearance: none;
-	background-color: #ccc;
-	height: 4px;
+  -webkit-appearance: none;
+  background-color: #ccc;
+  height: 4px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	position: relative;
-	top: 0px;
-	z-index: 1;
-	width: 11px;
-	height: 11px;
-	cursor: pointer;
-	-webkit-border-radius: 40px;
-	-moz-border-radius: 40px;
-	border-radius: 40px;
-	background: #999;
+  -webkit-appearance: none;
+  position: relative;
+  top: 0px;
+  z-index: 1;
+  width: 11px;
+  height: 11px;
+  cursor: pointer;
+  -webkit-border-radius: 40px;
+  -moz-border-radius: 40px;
+  border-radius: 40px;
+  background: #999;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-	background: #000;
+  background: #000;
 }
 
 /* points count input panel */
@@ -163,9 +178,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* type-0 points */
 #type-0 button {
-    background: radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
-    background: -o-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
-    background: -ms-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
-    background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
-    background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+  background: radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+  background: -o-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+  background: -ms-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+  background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
 }

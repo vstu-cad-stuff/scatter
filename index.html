@@ -120,21 +120,23 @@
         title="Change radius of spray"
       />
     </div>
-    <ul id="select_type">
-      <li class="selected" id="type-0">
-        <button
-          onClick="select_type(0)"
-          title="Type-0 points"
-        />
-      </li>
-      <li id="add_type">
-        <button
-          style="background-image: url('img/add.png')"
-          onClick="create_type()"
-          title="Create new type of points"
-        />
-      </li>
-    </ul>
+    <div id="selection_wrapper">
+        <ul id="select_type">
+          <li class="selected" id="type-0">
+            <button
+              onClick="select_type(0)"
+              title="Type-0 points"
+            />
+          </li>
+          <li id="add_type" class="last">
+            <button
+              style="background-image: url('img/add.png')"
+              onClick="create_type()"
+              title="Create new type of points"
+            />
+          </li>
+        </ul>
+     </div>
     <div id="input">
       Point's count: <br />
       <input type="input" id="count" />

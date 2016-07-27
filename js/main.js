@@ -11,31 +11,27 @@ if (error) {
 /* ---------- ----- ------- ---------- */ }
 
 /* ---------- get browser type ---------- */ {
-// function to get css prefix (http://stackoverflow.com/q/15071062/)
+// function to get css prefix
 function getCssValuePrefix()
 {
-    var rtrnVal = '';//default to standard syntax
-    var prefixes = ['-o-', '-ms-', '-moz-', '-webkit-'];
+  var rtrnVal = '';//default to standard syntax
+  var prefixes = ['-o-', '-ms-', '-moz-', '-webkit-'];
 
-    // Create a temporary DOM object for testing
-    var dom = document.createElement('div');
+  if (navigator.userAgent.search(/trident/i) > 0) {
+    // Internet Explorer
+    rtrnVal = '-ms-';
+  } else if (navigator.userAgent.search(/webkit/i) > 0) {
+    // Chrome, Safari
+    rtrnVal = '-webkit-';
+  } else if (navigator.userAgent.search(/opera/i) > 0) {
+    // Opera
+    rtrnVal = '-o-';
+  } else if(navigator.userAgent.search(/gecko/i) > 0) {
+    // Firefox
+    rtrnVal = '-moz-';
+  }
 
-    for (var i = 0; i < prefixes.length; i++)
-    {
-        // Attempt to set the style
-        dom.style.background = prefixes[i] + 'linear-gradient(#000000, #ffffff)';
-
-        // Detect if the style was successfully set
-        if (dom.style.background)
-        {
-            rtrnVal = prefixes[i];
-        }
-    }
-
-    dom = null;
-    delete dom;
-
-    return rtrnVal;
+  return rtrnVal;
 }
 
 var css_prefix = getCssValuePrefix();
