@@ -829,22 +829,23 @@ function all_clear() {
 // save function
 function save() {
   everytime();
-  // variable for text
-  var text = '';
-
+  
+  var array = [];
   // for each point
   for (i = 0; i < points.length; i++) {
     // variable for element of 'points' array
     var el = points[i];
     if (el != undefined) {
       // write it to 'text'
-      text += el[2] + ', ';
-      text += el[0].toFixed(6) + ', ';
-      text += el[1].toFixed(6);
-      // line break
-      text += '\n';
+      var type = el[2];
+      var lat  = el[0].toFixed(6);
+      var lon  = el[1].toFixed(6);
+      var el_obj =  {'type': type, 'lat': lat, 'lon': lon};
+      array.push(el_obj);
     }
-  }
+  };
+  var text = JSON.stringify(array);
+  console.log(text);
 
   // creating an 'a' element for downloading
   var a = document.createElement('a');
@@ -882,15 +883,13 @@ function read() {
   var reader = new FileReader();
   reader.onload = function(e) {
     var string = e.target.result;
-    points = string.split('\n');
-    if (points.slice(-1)[0].indexOf(',' == -1))
-      points.splice(-1);
+    var array = JSON.parse(string);
     layers.push(new L.FeatureGroup());
-    for (var i in points) {
-      points[i] = points[i].split(', ');
-      var type = points[i][0];
-      var lat = parseFloat(points[i][1]);
-      var lng = parseFloat(points[i][2]);
+    for (var i = 0; i < array.length; i++) {
+      var type = array[i].type;
+      var lat = parseFloat(array[i].lat);
+      var lng = parseFloat(array[i].lon);
+      points[i] = [];
       points[i][0] = lat;
       points[i][1] = lng;
       points[i][2] = type;
