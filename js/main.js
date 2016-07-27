@@ -10,6 +10,37 @@ if (error) {
 }
 /* ---------- ----- ------- ---------- */ }
 
+/* ---------- get browser type ---------- */ {
+// function to get css prefix (http://stackoverflow.com/q/15071062/)
+function getCssValuePrefix()
+{
+    var rtrnVal = '';//default to standard syntax
+    var prefixes = ['-o-', '-ms-', '-moz-', '-webkit-'];
+
+    // Create a temporary DOM object for testing
+    var dom = document.createElement('div');
+
+    for (var i = 0; i < prefixes.length; i++)
+    {
+        // Attempt to set the style
+        dom.style.background = prefixes[i] + 'linear-gradient(#000000, #ffffff)';
+
+        // Detect if the style was successfully set
+        if (dom.style.background)
+        {
+            rtrnVal = prefixes[i];
+        }
+    }
+
+    dom = null;
+    delete dom;
+
+    return rtrnVal;
+}
+
+var css_prefix = getCssValuePrefix();
+/* ---------- --- ------- ---- ---------- */ }
+
 /* ---------- initializing all variables ---------- */ {
 /* creating map; turning off closing popups on click:
    we'll do it ourselves */
@@ -27,7 +58,7 @@ var layers = [];
 // current mode of work. Initial - 'select' mode
 var work_mode = 'select';
 // current type of point. Initial - 'default'
-var point_type = 'default';
+var point_type = 0;
 // points count, need for spray and uniform modes
 var count = 20;
 // array of last actions
@@ -36,43 +67,23 @@ var last_actions = [];
 var clicked;
 // 
 var poly_state = [false, []];
+// 
+var point_colors = ['#0000ff'];
+// css radial-gradient string for replacing with color
+gradient = 'radial-gradient(center, ellipse cover, rgba(color, 0.7) 0%, rgba(color, 0.7) 50%, rgba(color, 1) 51%, rgba(color, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0,0, 0, 0) 100%)';
 /* ---------- ------------ --- --------- ---------- */ }
 
 /* ---------- marker icons ---------- */ {
 // icon for non-separated point
-var icon_def = L.icon({
-  iconUrl: 'img/icon.png',
+var icon = L.icon({
+  iconUrl: 'img/shadow.png',
   shadowUrl: 'img/shadow.png',
   
-  iconSize:     [16, 16],
-  shadowSize:   [16, 16],
-  iconAnchor:   [8, 8],
-  shadowAnchor: [8, 8],
-  popupAnchor:  [0, -5]
-});
-
-// icon for origin point
-var icon_origin = L.icon({
-  iconUrl: 'img/origin.png',
-  shadowUrl: 'img/shadow.png',
-  
-  iconSize:     [16, 16],
-  shadowSize:   [16, 16],
-  iconAnchor:   [8, 8],
-  shadowAnchor: [8, 8],
-  popupAnchor:  [0, -5]
-});
-
-// icon for destination point
-var icon_destination = L.icon({
-  iconUrl: 'img/destination.png',
-  shadowUrl: 'img/shadow.png',
-  
-  iconSize:     [16, 16],
-  shadowSize:   [16, 16],
-  iconAnchor:   [8, 8],
-  shadowAnchor: [8, 8],
-  popupAnchor:  [0, -5]
+  iconSize:     [14, 14],
+  shadowSize:   [1, 1],
+  iconAnchor:   [7, 7],
+  shadowAnchor: [0, 0],
+  popupAnchor:  [0, -3]
 });
 
 // icon for polygon handle
@@ -81,10 +92,10 @@ var icon_handle = L.icon({
   shadowUrl: 'img/shadow.png',
   
   iconSize:     [16, 16],
-  shadowSize:   [16, 16],
+  shadowSize:   [1, 1],
   iconAnchor:   [8, 8],
-  shadowAnchor: [8, 8],
-  popupAnchor:  [0, -5]
+  shadowAnchor: [0, 0],
+  popupAnchor:  [0, -3]
 });
 /* ---------- ------ ----- ---------- */ }
 
@@ -126,13 +137,8 @@ function everytime() {
 }
 
 function get_type(marker) {
-  /* some strange way to get state of marker:
-     get name of it's icon, then cut 'img/' in beginning
-     and '.png' at the end. If name is 'icon' then it is
-     a default marker */
-  var m_type = marker.options.icon.options.iconUrl.slice(4, -4);
-  if (m_type == 'icon')
-    m_type = 'default';
+  // get type of marker
+  var m_type = marker.options.type;
   return m_type;
 }
 
@@ -140,7 +146,15 @@ function draw_marker(type, latlng) {
   // creating marker
   var marker;
   switch (type) {
-    case 'default': {
+    case 'handle': {
+      marker = L.handle(latlng, {
+        draggable: 'true',
+        // layer's index in 'layers' array
+        layer: layers.length - 1
+      }).addTo(map);
+      break;
+    }
+    default: {
       marker = L.marker(latlng, {
         draggable: 'true',
         // layer's index in 'layers' array
@@ -149,36 +163,14 @@ function draw_marker(type, latlng) {
         point: points.length - 1
       }).addTo(map).
           bindPopup(latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
+      color = point_colors[type];
+      r = parseInt(color.substr(1, 2), 16);
+      g = parseInt(color.substr(3, 2), 16);
+      b = parseInt(color.substr(5, 2), 16);
+      color = [r, g, b].join();
+
+      marker._icon.style.background = css_prefix + gradient.replace(new RegExp('color', 'g'), color);
       break; }
-    case 'origin': {
-      marker = L.origin(latlng, {
-        draggable: 'true',
-        // layer's index in 'layers' array
-        layer: layers.length - 1,
-        // point's index in 'points' array
-        point: points.length - 1
-      }).addTo(map).
-          bindPopup('<b>origin</b><br/>' +
-          latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
-      break; }
-    case 'destination': {
-      marker = L.destination(latlng, {
-        draggable: 'true',
-        // layer's index in 'layers' array
-        layer: layers.length - 1,
-        // point's index in 'points' array
-        point: points.length - 1
-      }).addTo(map).
-          bindPopup('<b>destination</b><br/>' +
-          latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
-      break; }
-    case 'handle': {
-      marker = L.handle(latlng, {
-        draggable: 'true',
-        // layer's index in 'layers' array
-        layer: layers.length - 1
-      }).addTo(map);
-    }
   }
   // add event listeners to marker
   marker.on('click', onMarkerClick);
@@ -220,34 +212,13 @@ function change_to(type, L_id) {
   // remove marker from map
   map.removeLayer(marker);
   // use specified marker template
-  switch (type) {
-    case 'origin': {
-      marker = L.origin(latlng, {
-        layer: layer,
-        point: point
-      }).addTo(map).
-          bindPopup('<b>origin</b><br/>' +
-          lat.toFixed(5) + '; ' + lng.toFixed(5));
-      break;
-    }
-    case 'destination': {
-      marker = L.destination(latlng, {
-        layer: layer,
-        point: point
-      }).addTo(map).
-          bindPopup('<b>destination</b><br/>' +
-          lat.toFixed(5) + '; ' + lng.toFixed(5));
-      break;
-    }
-    case 'default': {
-      marker = L.marker(latlng, {
+  marker = L.marker(latlng, {
         layer: layer,
         point: point
       }).addTo(map).
           bindPopup(lat.toFixed(5) + '; ' + lng.toFixed(5));
-      break;
-    }
-  }
+  marker._icon.className += ' type' + type;
+  
   // add event listeners and callback functions
   marker.on('click', onMarkerClick);
   marker.on('dragstart', onMarkerDragStart);
@@ -278,7 +249,7 @@ function delete_marker(L_id) {
   var temp = ['delete', [marker]];
   // remove marker from layer
   layers[layer].removeLayer(marker);
-  if (type == 'handle') {
+  if (type < 0) {
     var inline = marker.options.in;
     var outline = marker.options.out;
     var vertex = marker.options.vertex;
@@ -351,7 +322,7 @@ function delete_marker(L_id) {
     map.removeLayer(layers[layer]);
     // and the 'layers' array
     delete layers[layer];
-    if (type == 'handle') {
+    if (type < 0) {
       poly_state[0] = false;
       poly_state[1] = [];
       document.getElementById('poly_cancel').disabled = true;
@@ -365,18 +336,18 @@ function delete_marker(L_id) {
 /* ---------- context menu functions ---------- */ {
 function set_as_origin() {
   // get prev_type and change 'clicked' marker to origin
-  var prev_type = change_to('origin', clicked);
+  var prev_type = change_to(1, clicked);
   // write new action to 'last_actions'
   last_actions.push(['change', clicked, prev_type]);
 }
 
 function set_as_destin() {
-  var prev_type = change_to('destination', clicked);
+  var prev_type = change_to(2, clicked);
   last_actions.push(['change', clicked, prev_type]);
 }
 
 function set_as_default() {
-  var prev_type = change_to('default', clicked);
+  var prev_type = change_to(0, clicked);
   last_actions.push(['change', clicked, prev_type]);
 }
 
@@ -393,12 +364,34 @@ function delete_point() {
    it was created (was made for undo actions),
    add option for binding Marker with it index in
    'points' array (was made for dragging points) */
+L.Handle = L.Marker.extend({
+   ilatlng: undefined,
+   options: {
+      draggable: 'true',
+      layer: 0,
+      vertex: 0,
+      in: undefined,
+      out: undefined,
+      icon: icon_handle,
+      contextmenu: true,
+      contextmenuInheritItems: false,
+      contextmenuItems: [{
+        text: 'Delete point',
+        callback: delete_point,
+        icon: 'img/delete.png'
+      }],
+      type: -1
+   }
+});
+
+L.handle = function (t, e) { return new L.Handle(t, e) };
+
 L.Marker = L.Marker.extend({
    options: {
       draggable: 'true',              // we can drag it now
       layer: 0,                       // option for binding with layer
       point: 0,                       // option for binding with index
-      icon: icon_def,                 // set icon to default
+      icon: icon,                     // set icon to default
       contextmenu: true,              // create context menu
       contextmenuInheritItems: false, // do NOT get inherit items (if do, we'll get infinite menu)
       contextmenuItems: [{            // set as origin
@@ -415,86 +408,10 @@ L.Marker = L.Marker.extend({
         text: 'Delete point',
         callback: delete_point,
         icon: 'img/delete.png'
-      }]
+      }],
+      type: 0
    }
 });
-
-L.Origin = L.Marker.extend({
-   options: {
-      draggable: 'true',
-      layer: 0,
-      point: 0,
-      icon: icon_origin,
-      contextmenu: true,
-      contextmenuInheritItems: false,
-      contextmenuItems: [{
-        text: 'Set as default point',
-        callback: set_as_default,
-        icon: 'img/icon.png'
-      }, {
-        text: 'Set as destination point',
-        callback: set_as_destin,
-        icon: 'img/destination.png'
-      }, {
-        separator: true
-      }, {
-        text: 'Delete point',
-        callback: delete_point,
-        icon: 'img/delete.png'
-      }]
-   }
-});
-
-L.origin = function (t, e) { return new L.Origin(t, e) };
-
-L.Destination = L.Marker.extend({
-   options: {
-      draggable: 'true',
-      layer: 0,
-      point: 0,
-      icon: icon_destination,
-      contextmenu: true,
-      contextmenuInheritItems: false,
-      contextmenuItems: [{
-        text: 'Set as default point',
-        callback: set_as_default,
-        icon: 'img/icon.png'
-      }, {
-        text: 'Set as origin point',
-        callback: set_as_origin,
-        icon: 'img/origin.png'
-      }, {
-        separator: true
-      }, {
-        text: 'Delete point',
-        callback: delete_point,
-        icon: 'img/delete.png'
-      }]
-   }
-});
-
-L.destination = function (t, e) { return new L.Destination(t, e) };
-
-L.Handle = L.Marker.extend({
-   ilatlng: undefined,
-   options: {
-      draggable: 'true',
-      layer: 0,
-      vertex: 0,
-      in: undefined,
-      out: undefined,
-      icon: icon_handle,
-      contextmenu: true,
-      contextmenuInheritItems: false,
-      contextmenuItems: [{
-        text: 'Delete point',
-        callback: delete_point,
-        icon: 'img/delete.png'
-      }]
-   }
-});
-
-L.handle = function (t, e) { return new L.Handle(t, e) };
 /* ---------- --------- ------- --------- ---------- */ }
 
 /* ---------- event handlers ---------- */ {
@@ -684,13 +601,21 @@ function onMarkerClick(e) {
       break; }
     case 'poly': {
       var i = 0;
-      while (poly_state[1][i] == undefined &&
-          i < poly_state[1].length)
-        i++;
-      if (i < poly_state[1].length &&
-          poly_state[1][i] != undefined)
-        if (e.target == poly_state[1][i])
-          poly_ready();
+      var def_count = 0;
+      for (var j = 0; j < poly_state[1].length; j++) {
+        if (poly_state[1][j] != undefined) {
+          def_count++;
+        }
+      };
+      if (def_count > 2) {
+        while (poly_state[1][i] == undefined &&
+            i < poly_state[1].length)
+          i++;
+        if (i < poly_state[1].length &&
+            poly_state[1][i] != undefined)
+          if (e.target == poly_state[1][i])
+            poly_ready();
+      };
       break; }
   }
 }
@@ -703,10 +628,10 @@ function onMarkerDragStart(e) {
   var marker = e.target;
   var marker_type = get_type(marker);
   if (work_mode != 'select' &&
-      !(work_mode == 'poly' && marker_type == 'handle')) {
+      !(work_mode == 'poly' && marker_type < 0)) {
     var layer = marker.options.layer;
     layers[layer].removeLayer(e.target);
-    if (marker_type != 'handle') {
+    if (marker_type >= 0) {
       marker._latlng.lat = points[marker.options.point][0];
       marker._latlng.lng = points[marker.options.point][1];
     } else {
@@ -723,7 +648,7 @@ function onMarkerDragEnd(e) {
   var lat = marker._latlng.lat;
   var lng = marker._latlng.lng;
   var type = get_type(marker);
-  if (type == 'handle') {
+  if (type < 0) {
     var line;
     if (marker.options.out != undefined) {
       line = marker.options.out;
@@ -745,19 +670,8 @@ function onMarkerDragEnd(e) {
     points[marker.options.point] = [lat, lng, type];
     
     // binding new popup
-    switch (type) {
-      case 'default': {
-        marker.bindPopup(lat.toFixed(5) + '; ' + lng.toFixed(5));
-      break; }
-      case 'origin': {
-        marker.bindPopup('<b>origin</b><br/>' +
-            lat.toFixed(5) + '; ' + lng.toFixed(5));
-      break; }
-      case 'destination': {
-        marker.bindPopup('<b>destination</b><br/>' +
-            lat.toFixed(5) + '; ' + lng.toFixed(5));
-      break; }
-    }
+    marker.bindPopup('Type ' + type + '<br/>' +
+      lat.toFixed(5) + '; ' + lng.toFixed(5));
   }
 }
 /* ---------- ----- -------- ---------- */ }
@@ -866,32 +780,38 @@ function select(option) {
   }
 }
 
+// create points type
+function create_type() {
+  var ul = document.getElementById('select_type');
+  var li_add = document.getElementById('add_type');
+  var li = document.createElement('li');
+  var type = point_colors.length;
+  li.setAttribute('id', 'type-' + type);
+    
+  var r = Math.floor(Math.random() * 256);
+  var g = Math.floor(Math.random() * 256);
+  var b = Math.floor(Math.random() * 256);
+  var color = [r, g, b].join();
+  var bgr = css_prefix + gradient.replace(new RegExp('color', 'g'), color);
+  li.innerHTML = '<button style="background: ' + bgr + '" onClick="select_type(' + type + ')" title="Type-' + type + ' points" />';
+  ul.insertBefore(li, li_add);
+  r = (r < 16) ? ('0' + r.toString(16)) : (r.toString(16));
+  g = (g < 16) ? ('0' + g.toString(16)) : (g.toString(16));
+  b = (b < 16) ? ('0' + b.toString(16)) : (b.toString(16));
+  color = '#' + r + g + b;
+  point_colors.push(color);
+  select_type(type);
+}
+
 // on point type selection
 function select_type(option) {
   everytime();
   // changing point's type
+  prev = document.getElementById('type-' + point_type);
+  curr = document.getElementById('type-' + option);
+  prev.className = '';
+  curr.className = 'selected';
   point_type = option;
-  // doing stuff depending on work mode
-  switch (point_type) {
-    case 'default': {
-      // select 'default' type
-      document.getElementById('default').className = 'selected';
-      document.getElementById('origin').className = '';
-      document.getElementById('destination').className = 'last';
-      break; }
-    case 'origin': {
-      // select 'origin' type
-      document.getElementById('default').className = '';
-      document.getElementById('origin').className = 'selected';
-      document.getElementById('destination').className = 'last';
-      break; }
-    case 'destination': {
-      // select 'destination' type
-      document.getElementById('default').className = '';
-      document.getElementById('origin').className = '';
-      document.getElementById('destination').className = 'last selected';
-      break; }
-  }
 }
 
 // clear map
@@ -974,6 +894,12 @@ function read() {
       points[i][0] = lat;
       points[i][1] = lng;
       points[i][2] = type;
+      if (point_colors.length <= type) {
+        while (point_colors.length <= type) {
+          create_type();
+        };
+        select_type(0);
+      }
       var marker = draw_marker(type, [lat, lng]);
       layers[layers.length - 1].addLayer(marker);
     }
@@ -1058,7 +984,7 @@ function undo() {
         var point = deleted[0];
         // getting layer's index in 'layers' array
         var layer_index = point.options.layer;
-        if (get_type(point) != 'handle') {
+        if (get_type(point) >= 0) {
           // getting point's index in 'points' array
           var point_index = point.options.point;
           // adding deleted coordinates of point to 'points' array

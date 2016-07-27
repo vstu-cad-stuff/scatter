@@ -160,3 +160,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
 #input input {
   text-align: center;
 }
+
+/* type-0 points */
+#type-0 button {
+    background: radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+    background: -o-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+    background: -ms-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+    background: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 255, 0.7) 0%, rgba(0, 0, 255, 0.7) 50%, rgba(0, 0, 255, 1) 51%, rgba(0, 0, 255, 1) 60%, rgba(0, 0, 0, 0) 61%, rgba(0, 0, 0, 0) 100%);
+}

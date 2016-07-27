@@ -108,7 +108,7 @@
           id="del_clear"
           style="background-image: url('img/clear.png')"
           onClick="all_clear()"
-          title="Clear map"
+          title="Clear map and history of changes"
         />
       </li>
     </ul>
@@ -116,30 +116,22 @@
       <input
         id="input_radius"
         type="range" value="0.01"
-        min="0.005" max="0.02" step="0.001"
+        min="0.005" max="0.03" step="0.001"
         title="Change radius of spray"
       />
     </div>
     <ul id="select_type">
-      <li class="selected" id="default">
+      <li class="selected" id="type-0">
         <button
-          style="background-image: url('img/icon.png')"
-          onClick="select_type('default')"
-          title="Default points"
+          onClick="select_type(0)"
+          title="Type-0 points"
         />
       </li>
-      <li id="origin">
+      <li id="add_type">
         <button
-          style="background-image: url('img/origin.png')"
-          onClick="select_type('origin')"
-          title="Origin points"
-        />
-      </li>
-      <li class="last" id="destination">
-        <button
-          style="background-image: url('img/destination.png')"
-          onClick="select_type('destination')"
-          title="Destination points"
+          style="background-image: url('img/add.png')"
+          onClick="create_type()"
+          title="Create new type of points"
         />
       </li>
     </ul>
