@@ -791,17 +791,23 @@ function select(option) {
 }
 
 // create points type
-function create_type() {
+function create_type(color) { // hex color
     var ul = document.getElementById('select_type');
     var li_add = document.getElementById('add_type');
     var li = document.createElement('li');
     var type = point_colors.length;
     li.setAttribute('id', 'type-' + type);
 
-    var r = Math.floor(Math.random() * 256);
-    var g = Math.floor(Math.random() * 256);
-    var b = Math.floor(Math.random() * 256);
-    var color = [r, g, b].join();
+    if (color == undefined) {
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+    } else {
+        var r = parseInt(color.substr(1, 2), 16);
+        var g = parseInt(color.substr(3, 2), 16);
+        var b = parseInt(color.substr(5, 2), 16);
+    };
+    color = [r, g, b].join();
     var bgr = css_prefix + gradient.replace(new RegExp('color', 'g'), color);
     li.innerHTML = '<button style="background: ' + bgr + '" onClick="select_type(' + type + ')" title="Type-' + type + ' points" />';
     ul.insertBefore(li, li_add);
