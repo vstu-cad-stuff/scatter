@@ -160,6 +160,9 @@ function draw_marker(type, latlng) {
                     point : points.length - 1
                 }).addTo(map).
                 bindPopup(latlng[0].toFixed(5) + '; ' + latlng[1].toFixed(5));
+            if (type == undefined) {
+                type = 0;
+            }
             color = point_colors[type];
             r = parseInt(color.substr(1, 2), 16);
             g = parseInt(color.substr(3, 2), 16);
@@ -698,6 +701,7 @@ function select(option) {
             // hide spray radius changer
             document.getElementById('spray_radius').style.visibility = 'hidden';
             // hide point's type selection menu
+            document.getElementById('selection_wrapper').style.visibility = 'hidden';
             document.getElementById('select_type').style.visibility = 'hidden';
             // select 'select' element
             document.getElementById('select').className = 'selected';
@@ -714,6 +718,7 @@ function select(option) {
             document.getElementById('del_sub').style.visibility = 'hidden';
             document.getElementById('spray_radius').style.visibility = 'hidden';
             // show point's type selection menu
+            document.getElementById('selection_wrapper').style.visibility = 'visible';
             document.getElementById('select_type').style.visibility = 'visible';
             // select 'point' element
             document.getElementById('select').className = '';
@@ -731,6 +736,7 @@ function select(option) {
             document.getElementById('del_sub').style.visibility = 'hidden';
             // show spray radius changer
             document.getElementById('spray_radius').style.visibility = 'visible';
+            document.getElementById('selection_wrapper').style.visibility = 'visible';
             document.getElementById('select_type').style.visibility = 'visible';
             document.getElementById('count').value = count;
             document.getElementById('select').className = '';
@@ -747,6 +753,7 @@ function select(option) {
             document.getElementById('poly_sub').style.visibility = 'visible';
             document.getElementById('del_sub').style.visibility = 'hidden';
             document.getElementById('spray_radius').style.visibility = 'hidden';
+            document.getElementById('selection_wrapper').style.visibility = 'visible';
             document.getElementById('select_type').style.visibility = 'visible';
             document.getElementById('count').value = count;
             document.getElementById('select').className = '';
@@ -762,6 +769,7 @@ function select(option) {
             document.getElementById('poly_sub').style.visibility = 'hidden';
             document.getElementById('del_sub').style.visibility = 'hidden';
             document.getElementById('spray_radius').style.visibility = 'hidden';
+            document.getElementById('selection_wrapper').style.visibility = 'visible';
             document.getElementById('select_type').style.visibility = 'visible';
             document.getElementById('count').value = count;
             document.getElementById('select').className = '';
@@ -778,6 +786,7 @@ function select(option) {
             // show delete submenu
             document.getElementById('del_sub').style.visibility = 'visible';
             document.getElementById('spray_radius').style.visibility = 'hidden';
+            document.getElementById('selection_wrapper').style.visibility = 'hidden';
             document.getElementById('select_type').style.visibility = 'hidden';
             document.getElementById('select').className = '';
             document.getElementById('point').className = '';
@@ -916,6 +925,13 @@ function read() {
         layers.push(new L.FeatureGroup());
         for (var i = 0; i < array.length; i++) {
             var type = array[i].type;
+            if (type == undefined) {
+                if (array[i].id != undefined) {
+                    type = array[i].id;
+                } else {
+                    type = 0;
+                }
+            }
             var lat = parseFloat(array[i].lat);
             var lng = parseFloat(array[i].lon);
             points[i] = [];

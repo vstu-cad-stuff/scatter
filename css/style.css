@@ -97,6 +97,7 @@
     max-height: 252px;
     width: 45px;
     height: 250px;
+    visibility: hidden;
 }
 
 #select_type {
